@@ -27,3 +27,25 @@ test('中文错误、键盘选择与小屏布局',async({page,request})=>{
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
  await page.screenshot({path:'artifacts/zh-mobile.png',fullPage:true});
 });
+test('桌面空状态、焦点、差异抽屉与处理中反馈',async({page})=>{
+ await page.route('**/api/state',route=>route.fulfill({json:{undo:false,images:{}}}));
+ await page.goto('/');
+ await expect(page.getByText('尚未选择元素')).toBeVisible();
+ await expect(page.getByRole('button',{name:'生成预设'})).toBeDisabled();
+ await expect(page.getByText('应用补丁后生成截图。').first()).toBeVisible();
+ await page.keyboard.press('Tab');
+ await expect(page.getByRole('link',{name:'跳到属性检查器'})).toBeFocused();
+ const drawer=page.getByRole('button',{name:/文件差异/});
+ await drawer.click();await expect(drawer).toHaveAttribute('aria-expanded','true');
+ await expect(page.locator('pre')).toContainText('选择按钮并生成预设后');
+ await drawer.click();await expect(page.locator('pre')).toHaveCount(0);
+ await page.frameLocator('iframe').getByRole('button',{name:'开始创作'}).click();
+ let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve});
+ await page.route('**/api/propose',async route=>{await gate;await route.continue()});
+ await page.getByRole('button',{name:'生成预设'}).click();
+ await expect(page.getByRole('status')).toContainText('正在处理');
+ await expect(page.getByLabel('希望如何修改？')).toBeDisabled();
+ await expect(page.getByRole('button',{name:'正在处理…'})).toBeDisabled();
+ release();await expect(page.locator('pre')).toContainText('border-radius: 24px');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+});

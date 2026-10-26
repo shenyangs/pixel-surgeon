@@ -4,6 +4,7 @@ test('real preset → disk → pixels → reload → undo',async({page,request})
  await request.post('/api/undo',{data:{}});
  await page.goto('/');
  const pause=async()=>{if(process.env.DEMO_RUN)await page.waitForTimeout(2200)};
+ await page.screenshot({path:'artifacts/editor-overview.png',fullPage:true});
  await pause();
  const cta=()=>page.frameLocator('iframe').getByRole('button',{name:'开始创作'});
  await expect(cta()).toHaveCSS('background-color','rgb(213, 75, 55)');

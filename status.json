@@ -1,7 +1,7 @@
 {
   "project": "pixel-surgeon",
   "state": "PARTIAL",
-  "scenario": "中文默认体验：选择示例按钮，预览固定紫色圆角补丁，真实写入 CSS，以截图和计算样式验证刷新持久化及撤销；附跨平台安装入口与中文环境诊断。",
+  "scenario": "浅灰画布编辑器：窄工具栏、右侧属性检查器、可折叠差异抽屉；固定紫色圆角预设，真实 CSS 写入、截图、刷新与撤销。",
   "checks": [
     {
       "id": "build",
@@ -57,6 +57,36 @@
       "id": "live-model-inference",
       "passed": false,
       "evidence": ".env.example"
+    },
+    {
+      "id": "editor-build",
+      "passed": true,
+      "evidence": "artifacts/logs/editor-build.log"
+    },
+    {
+      "id": "editor-unit-11",
+      "passed": true,
+      "evidence": "artifacts/logs/editor-test.log"
+    },
+    {
+      "id": "editor-e2e-4-desktop-mobile-focus-empty-busy-error-drawer",
+      "passed": true,
+      "evidence": "artifacts/logs/editor-e2e.log"
+    },
+    {
+      "id": "editor-recorded-demo",
+      "passed": true,
+      "evidence": "artifacts/logs/editor-demo.log"
+    },
+    {
+      "id": "editor-doctor",
+      "passed": true,
+      "evidence": "artifacts/logs/editor-doctor.log"
+    },
+    {
+      "id": "readme-real-screenshots",
+      "passed": true,
+      "evidence": "docs/images/editor-overview.png; docs/images/editor-result.png"
     }
   ],
   "commands": [
@@ -126,6 +156,26 @@
     },
     {
       "cmd": "npm run demo (中文重跑通过，29.2 秒)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run doctor (浅灰编辑器重构)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run build (浅灰编辑器重构)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run test (浅灰编辑器重构)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run e2e (浅灰编辑器重构)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run demo (浅灰编辑器重构)",
       "exitCode": 0
     }
   ],
