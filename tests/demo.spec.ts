@@ -1,3 +1,34 @@
-import {test, expect} from '@playwright/test';
-// TEMPLATE_DEMO_REPLACE: Agent must replace with scripted real P0 demonstration.
-test('starter demo', async ({page}) => { await page.goto('/'); await expect(page.locator('main')).toBeVisible(); await page.screenshot({path:'artifacts/starter.png'}); });
+import {test,expect} from '@playwright/test';
+import {readFile} from 'node:fs/promises';
+test('real preset → disk → pixels → reload → undo',async({page,request})=>{
+ await request.post('/api/undo',{data:{}});
+ await page.goto('/');
+ const pause=async()=>{if(process.env.DEMO_RUN)await page.waitForTimeout(2200)};
+ await pause();
+ const cta=()=>page.frameLocator('iframe').getByRole('button',{name:'Start creating'});
+ await expect(cta()).toHaveCSS('background-color','rgb(213, 75, 55)');
+ await expect(cta()).toHaveCSS('border-radius','0px');
+ await cta().click();await pause();
+ await page.getByRole('button',{name:'Generate preset'}).click();
+ await expect(page.locator('pre')).toContainText('border-radius: 24px');
+ await expect(cta()).toHaveCSS('border-radius','0px');
+ await pause();await page.screenshot({path:'artifacts/demo-before.png',fullPage:true});
+ await page.getByRole('button',{name:'Apply patch'}).click();
+ await expect(page.getByRole('status')).toContainText('Applied to disk',{timeout:30000});
+ await expect(cta()).toHaveCSS('border-radius','24px');
+ await expect(cta()).toHaveCSS('background-color','rgb(139, 92, 246)');
+ expect(await readFile('fixtures/demo-site/src/theme-overrides.css','utf8')).toContain('background-color: #8b5cf6');
+ const before=await (await request.get(await page.getByAltText('Before patch').getAttribute('src') as string)).body();
+ const after=await (await request.get(await page.getByAltText('After patch').getAttribute('src') as string)).body();
+ expect(before.equals(after)).toBe(false);
+ await pause();await page.screenshot({path:'artifacts/demo-after.png',fullPage:true});
+ await page.reload();await expect(cta()).toHaveCSS('border-radius','24px');await pause();
+ await page.getByRole('button',{name:'Undo',exact:true}).click();
+ await expect(page.getByRole('status')).toContainText('Original CSS restored',{timeout:30000});
+ await expect(cta()).toHaveCSS('background-color','rgb(213, 75, 55)');
+ await expect(cta()).toHaveCSS('border-radius','0px');
+ expect(await readFile('fixtures/demo-site/src/theme-overrides.css','utf8')).not.toContain('#8b5cf6');
+ await expect(page.getByAltText('After undo')).toBeVisible();
+ await page.getByAltText('After undo').scrollIntoViewIfNeeded();await pause();
+ await page.screenshot({path:'artifacts/demo-undo.png',fullPage:true});
+});

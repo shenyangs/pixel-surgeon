@@ -13,8 +13,9 @@
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "e2e": "playwright test",
-    "demo": "playwright test tests/demo.spec.ts",
-    "check": "npm run build && npm run test && npm run e2e"
+    "demo": "DEMO_RUN=1 playwright test tests/demo.spec.ts",
+    "check": "npm run build && npm run test && npm run e2e",
+    "browser:install": "PLAYWRIGHT_BROWSERS_PATH=.browsers playwright install chromium --no-shell"
   },
   "dependencies": {
     "react": "*",

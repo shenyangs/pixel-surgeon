@@ -1,0 +1,86 @@
+{
+  "project": "pixel-surgeon",
+  "state": "PARTIAL",
+  "scenario": "Select bundled React CTA, review deterministic preset diff, apply safe CSS to disk, verify real screenshot and reload persistence, undo and capture restored appearance.",
+  "checks": [
+    {
+      "id": "build",
+      "passed": true,
+      "evidence": "artifacts/logs/build.log"
+    },
+    {
+      "id": "safe-css-validation-9-tests",
+      "passed": true,
+      "evidence": "artifacts/logs/test.log"
+    },
+    {
+      "id": "disk-computed-style-screenshot-reload-undo-and-api-boundary",
+      "passed": true,
+      "evidence": "artifacts/logs/e2e.log"
+    },
+    {
+      "id": "recorded-demo",
+      "passed": true,
+      "evidence": "artifacts/logs/demo.log"
+    },
+    {
+      "id": "before-after-images",
+      "passed": true,
+      "evidence": "artifacts/demo-after.png"
+    },
+    {
+      "id": "undo-image",
+      "passed": true,
+      "evidence": "artifacts/demo-undo.png"
+    },
+    {
+      "id": "live-model-inference",
+      "passed": false,
+      "evidence": ".env.example"
+    }
+  ],
+  "commands": [
+    {
+      "cmd": "npm install --cache .npm-cache",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run e2e (initial: matching browser missing)",
+      "exitCode": 1
+    },
+    {
+      "cmd": "initial browser install including unused headless shell (interrupted after full Chromium downloaded)",
+      "exitCode": 130
+    },
+    {
+      "cmd": "npm run browser:install",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run build",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run test",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run e2e",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run demo",
+      "exitCode": 0
+    }
+  ],
+  "liveModel": false,
+  "fixturesUsed": true,
+  "demoVideo": "artifacts/playwright/demo/demo-real-preset-\u2192-disk-\u2192-pixels-\u2192-reload-\u2192-undo/video.webm",
+  "limitations": [
+    "No live model integration or inference; named rounded-purple preset only.",
+    "Only the bundled React .hero-cta can be changed; six constrained CSS properties.",
+    "Single-user localhost development workflow; no hosted deployment or authentication.",
+    "One-level undo; screenshots accumulate in ignored local artifacts.",
+    "macOS verified; Linux documented but not executed."
+  ]
+}
