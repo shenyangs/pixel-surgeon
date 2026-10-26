@@ -1,37 +1,57 @@
 {
   "project": "pixel-surgeon",
   "state": "PARTIAL",
-  "scenario": "Select bundled React CTA, review deterministic preset diff, apply safe CSS to disk, verify real screenshot and reload persistence, undo and capture restored appearance.",
+  "scenario": "中文默认体验：选择示例按钮，预览固定紫色圆角补丁，真实写入 CSS，以截图和计算样式验证刷新持久化及撤销；附跨平台安装入口与中文环境诊断。",
   "checks": [
     {
       "id": "build",
       "passed": true,
-      "evidence": "artifacts/logs/build.log"
+      "evidence": "artifacts/logs/zh-build.log"
     },
     {
-      "id": "safe-css-validation-9-tests",
+      "id": "unit-11-tests",
       "passed": true,
-      "evidence": "artifacts/logs/test.log"
+      "evidence": "artifacts/logs/zh-test.log"
     },
     {
-      "id": "disk-computed-style-screenshot-reload-undo-and-api-boundary",
+      "id": "e2e-3-tests-disk-style-reload-undo-chinese-keyboard-mobile",
       "passed": true,
-      "evidence": "artifacts/logs/e2e.log"
+      "evidence": "artifacts/logs/zh-e2e.log"
     },
     {
-      "id": "recorded-demo",
+      "id": "chinese-recorded-demo",
       "passed": true,
-      "evidence": "artifacts/logs/demo.log"
+      "evidence": "artifacts/logs/zh-demo.log"
     },
     {
-      "id": "before-after-images",
+      "id": "setup-reuses-installed-browser",
+      "passed": true,
+      "evidence": "artifacts/logs/zh-setup.log"
+    },
+    {
+      "id": "doctor-healthy",
+      "passed": true,
+      "evidence": "artifacts/logs/zh-doctor.log"
+    },
+    {
+      "id": "doctor-missing-dependencies-expected-exit-1",
+      "passed": true,
+      "evidence": "artifacts/logs/zh-doctor-missing-dependencies.log"
+    },
+    {
+      "id": "doctor-missing-browser-expected-exit-1",
+      "passed": true,
+      "evidence": "artifacts/logs/zh-doctor-missing-browser.log"
+    },
+    {
+      "id": "chinese-mobile-screenshot",
+      "passed": true,
+      "evidence": "artifacts/zh-mobile.png"
+    },
+    {
+      "id": "chinese-before-after-screenshot",
       "passed": true,
       "evidence": "artifacts/demo-after.png"
-    },
-    {
-      "id": "undo-image",
-      "passed": true,
-      "evidence": "artifacts/demo-undo.png"
     },
     {
       "id": "live-model-inference",
@@ -71,16 +91,53 @@
     {
       "cmd": "npm run demo",
       "exitCode": 0
+    },
+    {
+      "cmd": "npm run setup (中文版本；复用匹配浏览器)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run doctor (中文版本)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "node scripts/doctor.mjs (模拟缺依赖，预期返回 1)",
+      "exitCode": 1
+    },
+    {
+      "cmd": "node scripts/doctor.mjs (模拟缺浏览器，预期返回 1)",
+      "exitCode": 1
+    },
+    {
+      "cmd": "npm run demo (中文首次：截图阶段超时；保留 zh-demo-first-failed.log)",
+      "exitCode": 1
+    },
+    {
+      "cmd": "npm run build (中文最终)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run test (中文最终，11 项)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run e2e (中文最终，3 项)",
+      "exitCode": 0
+    },
+    {
+      "cmd": "npm run demo (中文重跑通过，29.2 秒)",
+      "exitCode": 0
     }
   ],
   "liveModel": false,
   "fixturesUsed": true,
-  "demoVideo": "artifacts/playwright/demo/demo-real-preset-\u2192-disk-\u2192-pixels-\u2192-reload-\u2192-undo/video.webm",
+  "demoVideo": "artifacts/playwright/demo/demo-real-preset-→-disk-→-pixels-→-reload-→-undo/video.webm",
   "limitations": [
-    "No live model integration or inference; named rounded-purple preset only.",
-    "Only the bundled React .hero-cta can be changed; six constrained CSS properties.",
-    "Single-user localhost development workflow; no hosted deployment or authentication.",
-    "One-level undo; screenshots accumulate in ignored local artifacts.",
-    "macOS verified; Linux documented but not executed."
+    "未接入或验证真实模型推理，仅有紫色圆角固定预设。",
+    "仅编辑随附 React 示例的 .hero-cta，属性和值均受限制。",
+    "单用户本地开发模式，无账户和公网部署；仅保留一级撤销。",
+    "仅在 macOS / Node.js 26.4.0 实机验证；Windows、Linux 和其他支持版本未实机验证。",
+    "setup 已实际重装项目依赖并复用已有浏览器；空缓存全新机器首次下载未验证。",
+    "中文演示首次截图阶段超时，根因未确认；已增加启动与截图超时限制，单独重跑通过。"
   ]
 }

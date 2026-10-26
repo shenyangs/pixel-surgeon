@@ -11,7 +11,7 @@ export const patchSchema = z.object({
   'font-size': /^(?:1[2-9]|[2-6][0-9]|7[0-2])px$/,
   'box-shadow': new RegExp(`^0px ${px} ${px} #[0-9a-fA-F]{6}$`)
  };
- if (!patterns[p.property].test(p.value)) ctx.addIssue({code:'custom',message:'Value is outside the safe CSS grammar'});
+ if (!patterns[p.property].test(p.value)) ctx.addIssue({code:'custom',message:'属性值超出安全 CSS 格式范围'});
 });
 export const patchesSchema = z.array(patchSchema).min(1).max(6);
 export function renderPatch(input: unknown) { return patchesSchema.parse(input).map(p => `${p.selector} { ${p.property}: ${p.value}; }`).join('\n')+'\n'; }

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
     "dev": "concurrently -k -n web,api \"npm:dev:web\" \"npm:dev:api\"",
@@ -13,17 +13,17 @@
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "e2e": "playwright test",
-    "demo": "DEMO_RUN=1 playwright test tests/demo.spec.ts",
+    "demo": "node scripts/tasks.mjs demo",
     "check": "npm run build && npm run test && npm run e2e",
-    "browser:install": "PLAYWRIGHT_BROWSERS_PATH=.browsers playwright install chromium --no-shell"
+    "browser:install": "node scripts/tasks.mjs browser",
+    "setup": "node scripts/tasks.mjs setup",
+    "doctor": "node scripts/doctor.mjs"
   },
   "dependencies": {
     "react": "*",
     "react-dom": "*",
     "express": "*",
-    "lucide-react": "*",
-    "zod": "*",
-    "diff": "*"
+    "zod": "*"
   },
   "devDependencies": {
     "@playwright/test": "*",

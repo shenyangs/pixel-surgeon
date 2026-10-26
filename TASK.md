@@ -1,28 +1,26 @@
-# A03 — PixelSurgeon
+# PixelSurgeon 项目说明
 
-Build a true visual CSS patcher for a bundled local React demo site. Read ./AGENTS.md. Do not simulate editing or allow arbitrary file writes. Deliver one fully verified before/after flow in 110 minutes.
+构建可运行的本地可视化 CSS 修补台，仅编辑随附的 React 示例。保持 TypeScript、React、Vite、Express、Playwright 技术栈，界面端口 4203、接口端口 5203，仅监听 127.0.0.1。
 
-## Stack and security
-- React/Vite editor UI + Express API + Playwright screenshot capture. Zod validation for `DesignPatch {selector, property, value}`. Whitelist ONLY safe properties: color, background-color, border-radius, padding, font-size, box-shadow, with constrained value types. Reject unsafe selectors/values.
-- Fixture site lives under `fixtures/demo-site/`; API writes ONLY its specifically allowlisted `src/theme-overrides.css`, after showing and validating diff. Never accept arbitrary filesystem paths, scripts or shell commands from LLM output. Snapshot/copy original for rollback.
-- Actual LLM conversion is optional via `OPENAI_API_KEY` (or documented supported provider) and must receive a structured response. Without a key, offer clearly labelled 'Preset patch / NO AI' so UX still works; do not claim AI drove it.
+## 核心流程
 
-## P0 happy path
-1. Embedded or adjacent demo-site iframe shows ugly/broken CTA; selecting a DOM element picks its approved selector.
-2. User types 'make the CTA rounded and purple' and presses Generate. If model configured, obtain actual structured patch; otherwise use named preset clearly labelled algorithmic. Show proposal and code diff BEFORE applying.
-3. Click Apply; backend physically updates the allowlisted CSS file. Browser screenshot AFTER materially differs from BEFORE. Reload proves change persists.
-4. Undo restores original CSS; generate new screenshot; show both in UI.
+1. 点击示例站点的「开始创作」选择 `.hero-cta`。
+2. 输入「把按钮改为紫色圆角」，生成固定规则预设，明确标注「无 AI 推理」。应用前显示代码差异。
+3. 应用时真实写入固定 CSS 文件，拍摄修改前后截图；刷新证明持久化。
+4. 撤销恢复上一份 CSS，并生成恢复截图。
 
-## Must prove
-- Unit tests: rejects `../../`, `url(javascript:...)`, script injection, unsupported properties.
-- E2E: select CTA, apply preset, check computed border-radius/background changed, reload and assert persists, undo restores original. Don't settle for visual toast.
-- `tests/demo.spec.ts` records the actual before/after/undo and saves screenshots/video.
-- README marks AI capability incomplete if no live API call ran; limits changes to bundled demo-site.
+模型转换为未实现项，不伪造推理、事件或测试结果。不读取用户凭据、不写任意文件、不依赖兄弟项目。
 
-## Visual / X
-Screen split: selected broken button left, minimal diff in center, corrected UI right. 0–3s circle ugly button, 3–11s 'AI proposes CSS', 11–19s click Apply and pixel-perfect change, 19–24s show exact Git diff.
+## 安全边界
 
+使用 Zod 严格验证选择器、属性和值。仅允许 color、background-color、border-radius、padding、font-size、box-shadow。唯一可编辑源文件为 `fixtures/demo-site/src/theme-overrides.css`。保存上一份快照用于撤销。拒绝路径穿越、脚本、URL、不支持的选择器和属性。
 
-Execute within this directory only. Run npm install, implement, then build/test/e2e/demo. Preserve real logs and status.json.
+## 中文和易用性要求
 
-This is an authorized independent sprint execution. Start implementing now, no confirmation. Do not spawn subagents. All writes limited to this app directory; use npm install --cache .npm-cache and keep .npm-cache ignored. Existing Playwright browsers may be read from ~/Library/Caches/ms-playwright; if install required use PLAYWRIGHT_BROWSERS_PATH inside this project. Install dependencies, replace starter tests with meaningful behavior tests, run build/test/e2e/demo and preserve actual logs, screenshot and video. Do not read user credentials or other project data. Missing model keys: runnable clearly labelled fixture and PARTIAL status. Add LICENSE. Verify and finish, not merely plan.
+界面、帮助、错误、状态、空态、替代文本以及主要项目文档默认中文；品牌和代码标识保留。提供首次三步引导、小屏布局、键盘焦点、忙碌与失败反馈。通过 Node 脚本提供跨平台 `npm run setup` 和中文 `npm run doctor`，只处理本项目依赖及必要浏览器，不修改机器设置。
+
+## 真实验收
+
+必须实际执行 build、test、e2e、demo。单元测试验证危险输入被拒绝；端到端验证计算样式、文件内容、刷新持久化和撤销；演示保留真实视频和截图。中文化不得削弱断言，另验证小屏、键盘、中文错误及 doctor 缺依赖路径。保留日志于 artifacts，源码提交不得包含凭据、缓存、日志或录屏。
+
+README 以中文说明用途、环境、依赖、安装、三步演示、故障恢复及真实限制。status.json 如实标记 PARTIAL，披露无真实推理与未验证环境。保留 MIT LICENSE。只提交本项目，不自动推送。
